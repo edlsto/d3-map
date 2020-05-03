@@ -6,7 +6,12 @@ var projection = d3
   .scale([1000]);
 var path = d3.geoPath().projection(projection);
 
-var legendText = ["States Lived", "States Visited", "Never Been There"];
+var legendText = [
+  "Cities Lived",
+  "States Lived",
+  "States Visited",
+  "Never Been There",
+];
 
 var svg = d3.select("svg").attr("width", w).attr("height", h);
 
@@ -50,7 +55,7 @@ d3.csv("./mystates.csv").then((data) => {
       .attr("cx", (d) => projection([d.lon, d.lat])[0])
       .attr("cy", (d) => projection([d.lon, d.lat])[1])
       .attr("r", 4)
-      .style("fill", "yellow");
+      .style("fill", d3.schemeCategory10[1]);
 
     svg
       .selectAll("line")
@@ -59,7 +64,13 @@ d3.csv("./mystates.csv").then((data) => {
       .append("line")
       .style("stroke", "black")
       .attr("stroke-width", 2)
-      .attr("x1", (d) => projection([d.lon, d.lat])[0])
+      .attr("x1", (d, i) => {
+        let offset = 4;
+        if (i === 2) {
+          offset = -4;
+        }
+        return projection([d.lon, d.lat])[0] + offset;
+      })
       .attr("y1", (d) => projection([d.lon, d.lat])[1])
       .attr("x2", (d, i) => {
         let offset = 40;
@@ -67,10 +78,34 @@ d3.csv("./mystates.csv").then((data) => {
           offset = -40;
         }
         return projection([d.lon, d.lat])[0] + offset;
-      }) // x position of the second end of the line
-      .attr("y2", (d) => projection([d.lon, d.lat])[1] + 20);
+      })
+      .attr("y2", (d) => projection([d.lon, d.lat])[1] + 10);
+
+    svg
+      .selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("x", (d, i) => {
+        console.log();
+        let offset = 45;
+        if (i === 2) {
+          offset = -105;
+        }
+        return projection([d.lon, d.lat])[0] + offset;
+      })
+      .attr("y", (d) => projection([d.lon, d.lat])[1] + 10)
+      .attr("dy", ".35em")
+      .text(function (d) {
+        console.log(d.place);
+        return d.place;
+      })
+      .attr("font-family", "Arial");
   });
 
+  console.log(colors);
+  colors.push(d3.schemeCategory10[1]);
+  console.log(colors);
   var legend = d3
     .select("body")
     .append("svg")
