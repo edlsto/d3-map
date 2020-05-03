@@ -1,4 +1,4 @@
-var w = 1000;
+var w = 800;
 var h = 500;
 var projection = d3
   .geoAlbersUsa()
